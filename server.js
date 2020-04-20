@@ -1,6 +1,8 @@
 let express=require("express");
 let mongodb=require("mongodb");
 let sanitizeHTML= require("sanitize-html")
+const dotenv= require('dotenv');
+dotenv.config();
 
 let App = express();
 let db;
@@ -12,8 +14,7 @@ if(port=="" || port== null){
 
 App.use(express.static('public'))
 
-let connectionString='mongodb+srv://todoAppUser:9089832282@cluster0-cea2d.mongodb.net/todoApp?retryWrites=true&w=majority';
-mongodb.connect(connectionString, {useUnifiedTopology: true}, function(err, client){
+mongodb.connect(process.env.CONNECTIONSTRING, {useUnifiedTopology: true}, function(err, client){
     db=client.db();
     App.listen(port);
 });
@@ -25,7 +26,7 @@ App.use(express.urlencoded({extended: false}));
 //Security
 function passwordProtected(req,res,next){
     res.set('WWW-Authenticate', 'Basic realm="Dude I need to see some ID"')
-    console.log(req.headers.authorization)
+    
     if(req.headers.authorization=="Basic amF2YXNjcmlwdDpjcnVk"){
       next()
     } else {
